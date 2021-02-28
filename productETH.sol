@@ -1,11 +1,12 @@
 //SPDX-License-Identifier: MIT
 pragma solidity >=0.6.0 <0.8.1;
 
-/**
- * @title Tech Insurance tor
- * @dev complete the functions
- */
-contract TechInsurance {
+// import "./InsuranceInterface.sol";
+ import "../github/OpenZeppelin/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
+ //import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol";
+
+
+contract productETH is ERC721 {
 
     
     struct Product {
@@ -19,28 +20,34 @@ contract TechInsurance {
         bool isValid;
         uint time;
     }
-
+    
+    constructor(address payable _insOwner) public ERC721("BravoToken", "bravo"){
+        insOwner = _insOwner;
+    }
+    
     mapping(uint => Product) public productIndex;
     mapping(address => mapping(uint => Client)) public client;
     
     uint productCounter;
     
     address payable public insOwner ;
-    constructor(address payable _insOwner) public{
-        insOwner = _insOwner;
-    }
+    
  
-    function addProduct(uint _productId, string memory _productName, uint _price ) public {
+    function addProduct(uint _productId, string memory _productName, uint _price ) public  {
         Product memory newProduct = Product (_productId, _productName, _price, true);
         productIndex[productCounter++] = newProduct;
+        _mint(msg.sender, productCounter);
+    //   address ownerOfAddress =  ownerOf(uint256(productCounter));
+    //   return ownerOfAddress;
+
     }
     
     
-    function changeFalse(uint _productIndex) public onlyOwner {
+    function changeFalse(uint _productIndex) public  onlyOwner {
         productIndex[_productIndex].offered = false;
     }
     
-    function changeTrue(uint _productIndex) public onlyOwner{
+    function changeTrue(uint _productIndex) public  onlyOwner{
         productIndex[_productIndex].offered = true;
     }
     
@@ -51,16 +58,27 @@ contract TechInsurance {
      }
  
      
-    function changePrice(uint _productIndex, uint _price) public onlyOwner{
+    function changePrice(uint _productIndex, uint _price) public  onlyOwner{
         productIndex[_productIndex].price = _price;
     }
 
-    function buyInsurance(uint _productIndex) public payable {
+    function buyInsurance(uint _productIndex) public  payable {
         require(productIndex[_productIndex].offered == true, "Tha Insurance is not available");
         Client memory newClient = Client (true, block.timestamp);
         client[msg.sender][_productIndex] =   newClient ;
         require(msg.value  == productIndex[_productIndex].price, "check the amount of the Insurance");
+        uint256 price = productIndex[_productIndex].price;
+        payable(msg.sender).transfer(price);
+
     } 
+   function transferInsurance( address to, uint256 _id) public {
+        //address owner=msg.sender;
+       require(msg.sender != to," You are the owner of this Insurance ");
+       require(ownerOf(_id) == msg.sender," Your not the Owner ");
+        _transfer(msg.sender, to, _id);
+        
+    }
+
 
     
 }
