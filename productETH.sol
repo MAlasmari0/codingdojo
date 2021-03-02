@@ -1,14 +1,13 @@
 //SPDX-License-Identifier: MIT
-pragma solidity >=0.6.0 <0.8.1;
-
-// import "./InsuranceInterface.sol";
- import "../github/OpenZeppelin/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
- //import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol";
+pragma solidity >=0.6.0 < 0.8.1;
 
 
-contract productETH is ERC721 {
+/**
+ * @title Tech Insurance tor
+ * @dev complete the functions
+ */
+contract TechInsurance{
 
-    
     struct Product {
         uint productId;
         string productName;
@@ -21,12 +20,23 @@ contract productETH is ERC721 {
         uint time;
     }
     
-    constructor(address payable _insOwner) public ERC721("BravoToken", "bravo"){
+    constructor(address payable _insOwner) public {
         insOwner = _insOwner;
     }
     
     mapping(uint => Product) public productIndex;
     mapping(address => mapping(uint => Client)) public client;
+     // //  // //ERC721 decleration
+    mapping (address => uint256) private _balances;
+    mapping (uint256 => address) private _owners;
+    mapping (uint256 => address) private _tokenApprovals;
+
+    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
+    event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);
+
+
+
+
     
     uint productCounter;
     
@@ -37,10 +47,9 @@ contract productETH is ERC721 {
         Product memory newProduct = Product (_productId, _productName, _price, true);
         productIndex[productCounter++] = newProduct;
         _mint(msg.sender, productCounter);
-    //   address ownerOfAddress =  ownerOf(uint256(productCounter));
-    //   return ownerOfAddress;
 
     }
+
     
     
     function changeFalse(uint _productIndex) public  onlyOwner {
@@ -67,18 +76,59 @@ contract productETH is ERC721 {
         Client memory newClient = Client (true, block.timestamp);
         client[msg.sender][_productIndex] =   newClient ;
         require(msg.value  == productIndex[_productIndex].price, "check the amount of the Insurance");
+        
         uint256 price = productIndex[_productIndex].price;
         payable(msg.sender).transfer(price);
-
     } 
-   function transferInsurance( address to, uint256 _id) public {
-        //address owner=msg.sender;
+    
+    function transferInsurance( address to, uint256 _id) public {
        require(msg.sender != to," You are the owner of this Insurance ");
        require(ownerOf(_id) == msg.sender," Your not the Owner ");
         _transfer(msg.sender, to, _id);
-        
+    }
+    //  // //ERC721 functions
+    
+     function _mint(address to, uint256 tokenId) internal virtual {
+        require(to != address(0), "ERC721: mint to the zero address");
+        require(!_exists(tokenId), "ERC721: token already minted");
+
+        _beforeTokenTransfer(address(0), to, tokenId);
+
+        _balances[to] += 1;
+        _owners[tokenId] = to;
+
+        emit Transfer(address(0), to, tokenId);
+}
+  function _exists(uint256 tokenId) internal view virtual returns (bool) {
+        return _owners[tokenId] != address(0);
     }
 
+ function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual { }
+ 
+  function _transfer(address from, address to, uint256 tokenId) internal virtual {
+        require(ownerOf(tokenId) == from, "ERC721: transfer of token that is not own");
+        require(to != address(0), "ERC721: transfer to the zero address");
 
+        _beforeTokenTransfer(from, to, tokenId);
+
+        // Clear approvals from the previous owner
+        _approve(address(0), tokenId);
+
+        _balances[from] -= 1;
+        _balances[to] += 1;
+        _owners[tokenId] = to;
+
+        emit Transfer(from, to, tokenId);
+    }
     
+     function ownerOf(uint256 tokenId) public view virtual returns (address) {
+        address owner = _owners[tokenId];
+        require(owner != address(0), "ERC721: owner query for nonexistent token");
+        return owner;
+    }
+    function _approve(address to, uint256 tokenId) internal virtual {
+        _tokenApprovals[tokenId] = to;
+        emit Approval(ownerOf(tokenId), to, tokenId);
+    }
+
 }
