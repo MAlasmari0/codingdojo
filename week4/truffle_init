@@ -1,0 +1,50 @@
+
+truffle(develop)> migrate
+
+Compiling your contracts...
+===========================
+> Compiling .\contracts\Migrations.sol
+> Artifacts written to C:\Users\96650\build\contracts
+> Compiled successfully using:
+   - solc: 0.5.16+commit.9c3226ce.Emscripten.clang
+
+
+
+Starting migrations...
+======================
+> Network name:    'develop'
+> Network id:      5777
+> Block gas limit: 6721975 (0x6691b7)
+
+
+1_initial_migration.js
+======================
+
+   Deploying 'Migrations'
+   ----------------------
+   > transaction hash:    0x8797b75a5df5b67b62834e2b7af98305f517f2b024ffc952abf1e0d47b920bcc
+   > Blocks: 0            Seconds: 0
+truffle(develop)>                                                                                                                                                                                                     > block number:        1
+   > block timestamp:     1615358574
+   > account:             0x6bfeee17667FE316E758379628349E7E0709CCE1
+   > balance:             99.99616114
+   > gas used:            191943 (0x2edc7)
+   > gas price:           20 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00383886 ETH
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:          0.00383886 ETH
+
+
+Summary
+=======
+> Total deployments:   1
+> Final cost:          0.00383886 ETH
+
+
+- Blocks: 0            Seconds: 0
+- Saving migration to chain.
